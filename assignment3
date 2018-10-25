@@ -1,0 +1,355 @@
+# linking-assignment-purnahaque
+linking-assignment-purnahaque created by GitHub Classroom
+
+#Problem 1: Dary Heap
+public class DaryHeap 
+{
+	int[] heap;
+	int size;
+	
+	private boolean less(int i, int j)
+	{
+		return Integer.compare(heap[i], heap[j])<0;
+	}
+	private void exch(int i, int j)
+	{
+		int t = heap[i];
+		heap[i] = heap[j];
+		heap[j] = t;
+	}
+	public DaryHeap(int d) 
+	{
+		heap=(int[]) new int[d+1];
+	}
+	
+	public boolean isEmpty()
+	{
+		return size == 0;
+	}
+	public void insert(int k) {
+		heap[size++]=k;
+		swim(size);
+	}
+	public int delMax()
+	{
+		int max = heap[1];
+		exch(1, size--);
+		sink(1);
+		heap[size+1] = 0;
+		return max;	
+	}
+	private void swim(int k)
+	{
+		while (k > 1 && less(k/2,k))
+		{
+			exch(k, k/2);
+			k = k/2;
+		}
+	}
+	private void sink(int k)
+	{
+		while (2*k <= size)
+		{
+			int j = 2*k;
+			if (j < size && less(j, j+1)) j++;
+			if (!less(k,j)) break;
+			exch(k, j);
+			k = j;
+		}
+	}
+	public void daryHeapsort()
+	{
+		int j = heap.length;
+		for (int k = j/2; k >= 1; k--)
+			sink(k);
+		while (j > 1)
+		{
+			exch(1, j);
+			sink(j--);
+		}
+	}
+	public void doubleArray()
+	{
+		if (size > 10) 
+		{
+			int doubleHeap[] = new int[2*size];
+			for(int i=0; i < size; i++)
+			{
+				doubleHeap[i] = heap[i]; 
+			}
+			heap = doubleHeap; 
+		}
+	}
+	
+}
+
+#Problem 2: BST
+import java.util.ArrayList;
+
+public class BST 
+{
+	int compare;
+	int d1;
+	BST left, right, parent;
+	BST roots; 
+
+	 BST() 
+	 {  
+	     this.right=null;
+	     this.left=null;
+	     this.parent=null;
+	     compare=0;
+	 }
+	 
+	
+	 public static void main(String[] args) {
+		 BST tree1=new BST();
+		 tree1.put(5);
+		 tree1.put(4);
+		 tree1.put(8);
+		 tree1.put(1);
+		 int[] a= {7,9,3,2,5};
+		 tree1.put(a);
+		 tree1.infix(tree1.roots);
+		 System.out.println();
+		 
+		 int[] EndResult=new int[tree1.returnSize()];
+		 EndResult=tree1.sortT();
+		 for(int i=0; i<EndResult.length;i++) {
+			 System.out.print(EndResult[i] + " ");
+		 }
+		 System.out.println();
+
+		 infix(balanceTree1(EndResult));
+		 System.out.println();
+		 tree1.transformToList();
+		 BST P=tree1.roots;
+		 tree1.infix(tree1.roots);
+	 }
+	 
+	
+	 
+	 void put (int value)
+	 { 	
+		 roots=recur_put(roots, value);
+	 }
+	 
+	 BST recur_put(BST root, int value) 
+	 { 
+	        if (root == null) { 
+	            root = new BST();
+	            root.d1=value;
+	            return root; 
+	        } 
+	        if (value < root.d1) 
+	            root.left = recur_put(root.left, value); 
+	        else if (value > root.d1) 
+	            root.right = recur_put(root.right, value); 
+	        return root; 
+	    } 
+	 
+
+	 void put(int[] a) { 
+		 for(int i=0; i<a.length; i++) {
+			 put(a[i]);
+		 }
+	 }
+	 
+	 int search(int key){ 
+	     if(recur_search(roots, key)==null) {
+	    	 System.out.println("Value not found!");
+	    	 System.out.println("Comparisons for Search: " + compare);
+	    	 compare=0;
+	    	 return 0;
+	     }
+	     else 
+	    	System.out.println("Comparisons for Search: " + compare);
+    	 	compare=0;
+	    	return (recur_search(roots, key)).d1;
+	    	
+	 } 
+	 
+	 
+	 private BST recur_search(BST root, int key){ 
+		 if (root==null) {
+			 compare++; 
+	    	 return null;
+	     }
+		 
+		 if (root.d1==key) {
+			 compare++;
+			 return root; 
+		 }
+	   
+	    if (root.d1 > key) { 
+	    	compare++;
+	        return recur_search(root.left, key); 
+	    }
+	  
+	     else {
+	    	 compare++;
+	    	 return recur_search(root.right, key);
+	     }
+	 }
+	 
+
+	 int returnSize() { // returns the total number of nodes in the BST.
+		 return helperreturnSize(roots);
+	 }
+	 
+	 int helperreturnSize(BST root) { // returns the total number of nodes in the BST.
+		 if (root==null)
+			 return 0;
+		 else 
+	        return(helperreturnSize(root.left) + 1 + helperreturnSize(root.right)); 
+	 }
+	 public static void infix(BST root) {
+			if(root== null) {
+				return;
+			}
+			infix(root.left);
+			System.out.print(root.d1 + " "); 
+			infix(root.right);
+	 }
+	  
+	 int[] sortT() 
+	 { 	
+		int[] result= new int[returnSize()];
+		ArrayList<Integer> arrayOfBST = new ArrayList<Integer>();
+		inorder(roots, arrayOfBST);
+		for(int i=0; i<result.length; i++) {
+			result[i]=arrayOfBST.get(i);
+		}
+		return result;
+		
+	 }
+
+	 public static ArrayList<Integer> inorder(BST root,ArrayList<Integer> arrayOfBST) {	//helper for sorted tree
+			if (root == null) {
+				return arrayOfBST;
+			}
+			inorder(root.left,arrayOfBST);
+			arrayOfBST.add(root.d1);
+			inorder(root.right,arrayOfBST);
+			return arrayOfBST;
+		}
+	
+	 static BST balanceTree1(int[] a) {
+		 return currRoot(a, 0, a.length-1);
+	 }
+	 
+	 static BST currRoot(int a[], int start, int end) { 
+	        //base case
+	        if (start > end) { 
+	            return null; 
+	        } 
+	        //mid element of arr=root
+	        int mid = (start + end) / 2; 
+	        BST newTreeNode = new BST(); 
+	        newTreeNode.d1=a[mid];
+	        newTreeNode.left = currRoot(a, start, mid - 1); 
+	        newTreeNode.right = currRoot(a, mid + 1, end); 
+	          
+	        return newTreeNode; 
+	    } 
+	 
+	 private BST parent(BST currentRoot, BST child) {        
+		    if (child==roots || currentRoot==null){
+		            return null;
+		    }
+		    else{
+		        if(currentRoot.left==child || currentRoot.right==child)
+		            return currentRoot;
+		        else {
+		            if (currentRoot.d1<child.d1) {
+		                return parent(currentRoot.right,child);
+		            }
+		            else {
+		                return parent(currentRoot.left,child);
+		            }
+		        }
+		    }
+		}  
+	 
+	 BST rotateLeft(BST h) { 		
+		 if (h.right == null) {
+			 return h;
+		 }
+		 if(h==roots) {
+			 roots=h.right;
+		 }
+
+		 BST x=h.right;
+		 h.right=x.left;
+		 x.left=h;
+		 return x;
+	 }
+	
+	 BST rotateRight(BST h) { 		
+		 if (h.left == null) {
+	            return h;
+	     }
+		 if(h==roots) {
+			 roots=h.left;
+		 }
+		 BST oldLeft = h.left; 
+	     h.left=oldLeft.right;
+	     oldLeft.right=h;
+	     return oldLeft;
+	 }
+	 
+	 
+	  void transformToList() {
+		  if(roots.left!=null) {
+			  roots=rotateRight(roots);
+		  }
+		  while(roots.left !=null) {	//rotates right until main root has no left children remaining
+			  roots=rotateRight(roots);
+		  }
+		  System.out.println("rotating");
+			 infix(roots);
+		  BST ptr=roots;
+		  ptr=ptr.right;
+		  while(ptr !=null) {	//rotates right until main root has no left children remaining
+			  while(ptr.left!=null) {
+				  ptr=rotateRight(ptr);
+				  System.out.println("rotating");
+				 infix(roots);
+			  }
+			  ptr=ptr.right;
+		  }
+	  }
+	  
+	  void balanceTreeTwo() {
+		  //1. First, restructure the tree by calling transformToList(); to turn it into a right-leaning linked list.
+		  transformToList();
+		  
+		  //2. Compute the parameter M 
+		  int N=returnSize();
+		  double M= (N+1) - (Math.pow(2, Math.floor((Math.log(N))/Math.log(2))));
+
+		  //3. From the root of the tree (which is now a right-leaning linked list),perform left rotations
+		  //on every odd node until M odd   nodes have been rotated.
+		  		//a. Example: Imagine a list 0->1->2->3->4. If M= 2, then we
+		  		//perform rotateLeft() on the �0� node and the �2� node. That�s
+		  		//exactly M odd nodes.
+		  roots=rotateLeft(roots);	
+		  for(int i=1; i<M; i++) {
+			  roots=rotateLeft(roots.right);
+		  }
+
+		  //4. Compute the parameter K
+		  double K= Math.floor(Math.log(N)/Math.log(2)) - 1;
+
+		  //5. For K times, compute left rotations on the remaining right-leaning odd nodes.
+		  roots=rotateLeft(roots);
+		  for(int i=1; i<K; i++) {
+			  roots=rotateLeft(roots.right);
+		  }
+	  
+	  }
+	 
+	  
+	  
+}
+
